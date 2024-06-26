@@ -64,7 +64,7 @@ distance x1 y1 x2 y2 = ((x1 - x2) ^^ 2 + (y1 - y2) ^^ 2)**0.5
 -- Ps. have a look at the built in function "even"
 
 eeny :: Integer -> String
-eeny = if even x then "eeny" else "meeny"
+eeny x = if even x then "eeny" else "meeny"
 
 ------------------------------------------------------------------------------
 -- Ex 6: here's the function checkPassword from the course material.
