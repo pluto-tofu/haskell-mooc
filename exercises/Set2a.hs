@@ -32,7 +32,7 @@ years = [1982, 2004, 2020]
 -- Hint! remember the take and drop functions.
 
 takeFinal :: Int -> [a] -> [a]
-takeFinal n list = if length list < n then list else drop (length list - n) xs
+takeFinal n list = if length list < n then list else drop (length list - n) list
 
 ------------------------------------------------------------------------------
 -- Ex 3: Update an element at a certain index in a list. More
@@ -157,4 +157,4 @@ eitherDiv x y = if y == 0 then Left (show x ++ "/" ++ show y) else Right (div x 
 --   addEithers (Left "boom") (Left "fail") ==> Left "boom"
 
 addEithers :: Either String Int -> Either String Int -> Either String Int
-addEithers a b = if isLeft a then a else if isRight a && isRight b then Right (fromRight a + fromRight b) else b
+addEithers a b = if Left a then a else if Right a && Right b then Right (Right a + Right b) else b
