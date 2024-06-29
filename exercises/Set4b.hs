@@ -21,7 +21,9 @@ import Mooc.Todo
 countNothings :: [Maybe a] -> Int
 countNothings xs = foldr countHelper 0 xs
 
-countHelper = todo
+countHelper :: Maybe a -> Int -> Int
+countHelper (Nothing) a = a + 1 
+countHelper (Just _)  a = a
 
 ------------------------------------------------------------------------------
 -- Ex 2: myMaximum with a fold. Just like in the previous exercise,
@@ -35,7 +37,8 @@ myMaximum :: [Int] -> Int
 myMaximum [] = 0
 myMaximum (x:xs) = foldr maxHelper x xs
 
-maxHelper = todo
+maxHelper :: Int -> Int -> Int
+maxHelper a b = max a b
 
 ------------------------------------------------------------------------------
 -- Ex 3: compute the sum and length of a list with a fold. Define
@@ -52,8 +55,10 @@ maxHelper = todo
 sumAndLength :: [Double] -> (Double,Int)
 sumAndLength xs = foldr slHelper slStart xs
 
-slStart = todo
-slHelper = todo
+slStart = (0.0, 0)
+
+slHelper :: Double -> (Double, Int) -> (Double, Int)
+slHelper a (b,c) = (a + b, c + 1)
 
 ------------------------------------------------------------------------------
 -- Ex 4: implement concat with a fold. Define concatHelper and
@@ -67,9 +72,11 @@ slHelper = todo
 myConcat :: [[a]] -> [a]
 myConcat xs = foldr concatHelper concatStart xs
 
-concatStart = todo
-concatHelper = todo
+concatStart :: [a]
+concatStart = []
 
+concatHelper :: [a] -> [a] -> [a]
+concatHelper = (++)
 ------------------------------------------------------------------------------
 -- Ex 5: get all occurrences of the largest number in a list with a
 -- fold. Implement largestHelper so that the given definition of largest works.
@@ -81,10 +88,7 @@ concatHelper = todo
 
 largest :: [Int] -> [Int]
 largest xs = foldr largestHelper [] xs
-
-largestHelper = todo
-
-
+largestHelper a b = if null b then [a] else if a > head b then [a] else if a < head b then b else a : b
 ------------------------------------------------------------------------------
 -- Ex 6: get the first element of a list with a fold. Define
 -- headHelper so that the given definition of myHead works.
@@ -98,7 +102,8 @@ largestHelper = todo
 myHead :: [a] -> Maybe a
 myHead xs = foldr headHelper Nothing xs
 
-headHelper = todo
+headHelper :: a -> Maybe a -> Maybe a
+headHelper a acc = Just a
 
 ------------------------------------------------------------------------------
 -- Ex 7: get the last element of a list with a fold. Define lasthelper
@@ -113,5 +118,7 @@ headHelper = todo
 myLast :: [a] -> Maybe a
 myLast xs = foldr lastHelper Nothing xs
 
-lastHelper = todo
+lastHelper :: a -> Maybe a -> Maybe a
+lastHelper a Nothing = Just a
+lastHelper a acc     = acc
 
