@@ -35,7 +35,7 @@ import Data.Array
 -- you remove the Eq a => constraint from the type!
 
 allEqual :: Eq a => [a] -> Bool
-allEqual xs = todo
+allEqual xs = if null xs || length xs == 1 then True else if head xs /= head (tail xs) then False else allEqual (tail xs)
 
 ------------------------------------------------------------------------------
 -- Ex 2: implement the function distinct which returns True if all
@@ -50,7 +50,7 @@ allEqual xs = todo
 --   distinct [1,2] ==> True
 
 distinct :: Eq a => [a] -> Bool
-distinct = todo
+distinct xs = length (nub xs) == length xs
 
 ------------------------------------------------------------------------------
 -- Ex 3: implement the function middle that returns the middle value
@@ -63,7 +63,8 @@ distinct = todo
 --   middle 'b' 'a' 'c'  ==> 'b'
 --   middle 1 7 3        ==> 3
 
-middle = todo
+middle :: (Ord a) => a -> a -> a -> a
+middle a b c = (sort [a,b,c]) !! 1
 
 ------------------------------------------------------------------------------
 -- Ex 4: return the range of an input list, that is, the difference
@@ -79,8 +80,7 @@ middle = todo
 --   rangeOf [1.5,1.0,1.1,1.2]  ==> 0.5
 
 rangeOf :: [a] -> a
-rangeOf = todo
-
+rangeOf xs = if null xs then error "Empty list" else maximum xs - minimum xs
 ------------------------------------------------------------------------------
 -- Ex 5: given a (non-empty) list of (non-empty) lists, return the longest
 -- list. If there are multiple lists of the same length, return the list that
