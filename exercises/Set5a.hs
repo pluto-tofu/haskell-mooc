@@ -12,15 +12,14 @@ import Mooc.Todo
 -- Bus, Tram and Train.
 --
 -- The constructors don't need any fields.
-
-
+data Vehicle = Bike | Bus | Tram | Train
 ------------------------------------------------------------------------------
 -- Ex 2: Define the type BusTicket that can represent values like these:
 --  - SingleTicket
 --  - MonthlyTicket "January"
 --  - MonthlyTicket "December"
 
-
+data BusTicket = SingleTicket | MonthlyTicket String
 ------------------------------------------------------------------------------
 -- Ex 3: Here's the definition for a datatype ShoppingEntry that
 -- represents an entry in a shopping basket. It has an item name (a
@@ -48,7 +47,7 @@ twoBananas = MkShoppingEntry "Banana" 1.1 2
 --   totalPrice twoBananas   ==> 2.2
 
 totalPrice :: ShoppingEntry -> Double
-totalPrice = todo
+totalPrice (MkShoppingEntry _ price count) = price * (fromIntegral count)
 
 -- buyOneMore should increment the count in an entry by one
 --
@@ -56,7 +55,7 @@ totalPrice = todo
 --   buyOneMore twoBananas    ==> MkShoppingEntry "Banana" 1.1 3
 
 buyOneMore :: ShoppingEntry -> ShoppingEntry
-buyOneMore = todo
+buyOneMore (MkShoppingEntry name price quantity) = MkShoppingEntry name price (quantity + 1)
 
 ------------------------------------------------------------------------------
 -- Ex 4: define a datatype Person, which should contain the age (an
@@ -70,23 +69,23 @@ data Person = PersonUndefined
 
 -- fred is a person whose name is Fred and age is 90
 fred :: Person
-fred = todo
+fred = MkPerson "Fred" 90
 
 -- getName returns the name of the person
 getName :: Person -> String
-getName p = todo
+getName (MkPerson name _) = name
 
 -- getAge returns the age of the person
 getAge :: Person -> Int
-getAge p = todo
+getAge (MkPerson _ age) = age
 
 -- setName takes a person and returns a new person with the name changed
 setName :: String -> Person -> Person
-setName name p = todo
+setName name p = MkPerson name (getAge p)
 
 -- setAge does likewise for age
 setAge :: Int -> Person -> Person
-setAge age p = todo
+setAge age p = MkPerson (getName p) age
 
 ------------------------------------------------------------------------------
 -- Ex 5: define a datatype Position which contains two Int values, x
@@ -100,24 +99,23 @@ data Position = PositionUndefined
 
 -- origin is a Position value with x and y set to 0
 origin :: Position
-origin = todo
+origin = MkPosition 0 0
 
 -- getX returns the x of a Position
 getX :: Position -> Int
-getX = todo
+getX (MkPosition x _) = x
 
 -- getY returns the y of a position
 getY :: Position -> Int
-getY = todo
+getY (MkPosition _ y) = y
 
 -- up increases the y value of a position by one
 up :: Position -> Position
-up = todo
+up p = MkPosition (getX p) (getY p + 1)
 
 -- right increases the x value of a position by one
 right :: Position -> Position
-right = todo
-
+right p = MkPosition (getX p + 1) (getY p)
 ------------------------------------------------------------------------------
 -- Ex 6: Here's a datatype that represents a student. A student can
 -- either be a freshman, a nth year student, or graduated.
