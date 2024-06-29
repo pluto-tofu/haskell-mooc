@@ -132,7 +132,7 @@ smallestDivisor_help n k = if n `mod` k == 0 then k else smallestDivisor_help n 
 -- Ps. 0 and 1 are not prime numbers
 
 isPrime :: Integer -> Bool
-isPrime a = if a <= 1 then False else if (smallestDivisor' a 2) == a then True else False
+isPrime a = if a <= 1 then False else if (smallestDivisor_help a 2) == a then True else False
 ------------------------------------------------------------------------------
 -- Ex 8: implement a function biggestPrimeAtMost that returns the
 -- biggest prime number that is less than or equal to the given
