@@ -97,7 +97,9 @@ rangeOf xs = if null xs then error "Empty list" else maximum xs - minimum xs
 --   longest [[1,2,3],[4,5],[6]] ==> [1,2,3]
 --   longest ["bcd","def","ab"] ==> "bcd"
 
-longest = todo
+longest :: Ord a => [[a]] -> [a]
+longest (x:[]) = x
+longest (x:y:xs) = if length x > length y then longest (x:xs) else if length x < length y then longest (y:xs) else if x < y then longest (x:xs) else longest (y:xs)
 
 ------------------------------------------------------------------------------
 -- Ex 6: Implement the function incrementKey, that takes a list of
@@ -113,8 +115,9 @@ longest = todo
 --   incrementKey True [(True,1),(False,3),(True,4)] ==> [(True,2),(False,3),(True,5)]
 --   incrementKey 'a' [('a',3.4)] ==> [('a',4.4)]
 
-incrementKey :: k -> [(k,v)] -> [(k,v)]
-incrementKey = todo
+incrementKey :: (Ord k, Num v) => k -> [(k,v)] -> [(k,v)]
+incrementKey d [] = []
+incrementKey d ((a, b):xs) = if d == a then (a, b + 1) : incrementKey d xs else (a, b) : incrementKey d xs
 
 ------------------------------------------------------------------------------
 -- Ex 7: compute the average of a list of values of the Fractional
@@ -129,7 +132,7 @@ incrementKey = todo
 -- length to a Fractional
 
 average :: Fractional a => [a] -> a
-average xs = todo
+average xs = sum xs / fromIntegral (length xs)
 
 ------------------------------------------------------------------------------
 -- Ex 8: given a map from player name to score and two players, return
@@ -148,7 +151,7 @@ average xs = todo
 --     ==> "Lisa"
 
 winner :: Map.Map String Int -> String -> String -> String
-winner scores player1 player2 = todo
+winner scores player1 player2 =  if (f player2) > (f player1) then player2 else player1 where f k = Map.findWithDefault 0 k scores
 
 ------------------------------------------------------------------------------
 -- Ex 9: compute how many times each value in the list occurs. Return
@@ -163,7 +166,9 @@ winner scores player1 player2 = todo
 --     ==> Map.fromList [(False,3),(True,1)]
 
 freqs :: (Eq a, Ord a) => [a] -> Map.Map a Int
-freqs xs = todo
+freqs [] = Map.empty
+freqs xs = Map.fromList [(i, count i xs) | i <- nub xs]
+            where count n ns = (length . filter (==n)) ns
 
 ------------------------------------------------------------------------------
 -- Ex 10: recall the withdraw example from the course material. Write a
@@ -191,7 +196,13 @@ freqs xs = todo
 --     ==> fromList [("Bob",100),("Mike",50)]
 
 transfer :: String -> String -> Int -> Map.Map String Int -> Map.Map String Int
-transfer from to amount bank = todo
+transfer from to amount bank =
+    if Map.notMember from bank || Map.notMember to bank || amount <= 0 || (Map.findWithDefault 0 from bank) < amount
+        then bank
+        else credit to (debit from bank)
+  where
+    credit r bk = Map.adjust (\x -> x + amount) r bk
+    debit s bk = Map.adjust (\x -> x - amount) s bk
 
 ------------------------------------------------------------------------------
 -- Ex 11: given an Array and two indices, swap the elements in the indices.
@@ -201,7 +212,7 @@ transfer from to amount bank = todo
 --         ==> array (1,4) [(1,"one"),(2,"three"),(3,"two"),(4,"four")]
 
 swap :: Ix i => i -> i -> Array i a -> Array i a
-swap i j arr = todo
+swap i j arr = arr // [(i, arr ! j), (j, arr ! i)]
 
 ------------------------------------------------------------------------------
 -- Ex 12: given an Array, find the index of the largest element. You
@@ -212,4 +223,5 @@ swap i j arr = todo
 -- Hint: check out Data.Array.indices or Data.Array.assocs
 
 maxIndex :: (Ix i, Ord a) => Array i a -> i
-maxIndex = todo
+maxIndex arr = fst ((sortBy largest (assocs arr)) !! 0)
+                  where largest x y = compare (snd y) (snd x)
