@@ -76,9 +76,11 @@ mapMaybe2 f x y = if isNothing x || isNothing y then Nothing else Just (f (fromJ
 palindromeHalfs :: [String] -> [String]
 palindromeHalfs xs = map firstHalf (filter palindrome xs)
 
-firstHalf = todo
+firstHalf :: String -> String
+firstHalf s = take (div (n+1) 2) s where n = length s
 
-palindrome = todo
+palindrome :: String -> Bool
+palindrome s = reverse s == s
 
 ------------------------------------------------------------------------------
 -- Ex 5: Implement a function capitalize that takes in a string and
@@ -96,7 +98,10 @@ palindrome = todo
 --   capitalize "goodbye cruel world" ==> "Goodbye Cruel World"
 
 capitalize :: String -> String
-capitalize = todo
+capitalize s = unwords (map capitalizeFirst (words s))
+
+capitalizeFirst :: String -> String
+capitalizeFirst word = toUpper (head word) : tail word
 
 ------------------------------------------------------------------------------
 -- Ex 6: powers k max should return all the powers of k that are less
@@ -113,8 +118,7 @@ capitalize = todo
 --   * the function takeWhile
 
 powers :: Int -> Int -> [Int]
-powers k max = todo
-
+powers k max = takeWhile (\a -> a <= max) [k^j | j <- [0..max]]
 ------------------------------------------------------------------------------
 -- Ex 7: implement a functional while loop. While should be a function
 -- that takes a checking function, an updating function, and an
@@ -136,8 +140,7 @@ powers k max = todo
 --     ==> Avvt
 
 while :: (a->Bool) -> (a->a) -> a -> a
-while check update value = todo
-
+while check update value = if (check value) == False then value else while check update (update value)
 ------------------------------------------------------------------------------
 -- Ex 8: another version of a while loop. This time, the check
 -- function returns an Either value. A Left value means stop, a Right
@@ -156,7 +159,7 @@ while check update value = todo
 -- Hint! Remember the case-of expression from lecture 2.
 
 whileRight :: (a -> Either b a) -> a -> b
-whileRight check x = todo
+whileRight f x = whileRight' f (f x)
 
 -- for the whileRight examples:
 -- step k x doubles x if it's less than k
@@ -180,8 +183,7 @@ bomb x = Right (x-1)
 -- Hint! This is a great use for list comprehensions
 
 joinToLength :: Int -> [String] -> [String]
-joinToLength = todo
-
+joinToLength l s = [x | a <- s, b <- s, let x = a ++ b, length x == l]
 ------------------------------------------------------------------------------
 -- Ex 10: implement the operator +|+ that returns a list with the first
 -- elements of its input lists.
@@ -193,8 +195,8 @@ joinToLength = todo
 --   [1,2,3] +|+ [4,5,6]  ==> [1,4]
 --   [] +|+ [True]        ==> [True]
 --   [] +|+ []            ==> []
-
-
+(+|+) :: [a] -> [a] -> [a]
+x +|+ y = map head $ filter (not . null) [x,y]
 ------------------------------------------------------------------------------
 -- Ex 11: remember the lectureParticipants example from Lecture 2? We
 -- used a value of type [Either String Int] to store some measurements
@@ -210,8 +212,12 @@ joinToLength = todo
 --   sumRights [Left "bad!", Left "missing"]         ==>  0
 
 sumRights :: [Either a Int] -> Int
-sumRights = todo
+sumRights = sum . map get
 
+get :: Either a Int -> Int
+get = \case
+  Left _  -> 0
+  Right x -> x
 ------------------------------------------------------------------------------
 -- Ex 12: recall the binary function composition operation
 -- (f . g) x = f (g x). In this exercise, your task is to define a function
@@ -226,7 +232,12 @@ sumRights = todo
 --   multiCompose [(3*), (2^), (+1)] 0 ==> 6
 --   multiCompose [(+1), (2^), (3*)] 0 ==> 2
 
-multiCompose fs = todo
+multiCompose :: [(a -> a)] -> a -> a
+multiCompose fs x = multiCompose' (reverse fs) x
+
+multiCompose_help :: [(a -> a)] -> a -> a
+multiCompose_help [] x         = x
+multiCompose_help (f:fs) x     = multiCompose_help fs (f x)
 
 ------------------------------------------------------------------------------
 -- Ex 13: let's consider another way to compose multiple functions. Given
@@ -247,8 +258,8 @@ multiCompose fs = todo
 --   multiApp id [head, (!!2), last] "axbxc" ==> ['a','b','c'] i.e. "abc"
 --   multiApp sum [head, (!!2), last] [1,9,2,9,3] ==> 6
 
-multiApp = todo
-
+multiApp :: ([a] -> b) -> [(c -> a)] -> c -> b
+multiApp f gs s = f (map (\x -> x s) gs)
 ------------------------------------------------------------------------------
 -- Ex 14: in this exercise you get to implement an interpreter for a
 -- simple language. You should keep track of the x and y coordinates,
@@ -282,4 +293,16 @@ multiApp = todo
 -- function, the surprise won't work. See section 3.8 in the material.
 
 interpreter :: [String] -> [String]
-interpreter commands = todo
+interpreter commands = interpret 0 0 commands []
+
+interpret :: Int -> Int -> [String] -> [String] -> [String]
+interpret _ _ [] results = reverse results
+interpret x y (cmd:cmds) results =
+  case cmd of
+    "up" -> interpret x (y + 1) cmds results
+    "down" -> interpret x (y - 1) cmds results
+    "left" -> interpret (x - 1) y cmds results
+    "right" -> interpret (x + 1) y cmds results
+    "printX" -> interpret x y cmds (show x : results)
+    "printY" -> interpret x y cmds (show y : results)
+    _ -> interpret x y cmds results
